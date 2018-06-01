@@ -20,7 +20,7 @@ contract Game {
             if(playerGameMap[gameName].playerAddrs[i] == msg.sender){
                 break;
             }
-            if(playerGameMap[gameName].playerAddrs[i] == 0){
+            if(playerGameMap[gameName].playerAddrs[i] == 0x0){
                 playerGameMap[gameName].playerAddrs[i] = msg.sender;
                 break;
             }
