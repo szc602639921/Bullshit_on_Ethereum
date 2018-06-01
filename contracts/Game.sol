@@ -32,5 +32,14 @@ function getPlayers(string gameName) public view returns (address[5]) {
     return playerGameMap[gameName].playerAddrs;
 }
 
+function isGameFull(string gameName) public view returns (bool) {
+    gameInfo memory currentGame =  playerGameMap[gameName];
+
+    if (currentGame.playerAddrs[currentGame.size - 1] == 0){
+        return false;
+    }
+
+    return true;
+}
 }
 
