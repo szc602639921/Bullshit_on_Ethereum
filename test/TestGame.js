@@ -1,9 +1,10 @@
 var Game = artifacts.require("Game");
-var account_one = "0x8D27cD939932a86c27A2d46f1cBc314f883ceD4c";
-var account_two = "0x9aBb837096c6084F5777cfbA8A24DAdDda81b96c";
 
 contract('Game', function(accounts) {
-    
+   var game;
+   var account_one = accounts[0];
+    var account_two = accounts[1];
+ 
     
   it("should allow a user to create a game", function() {
         return Game.deployed().then(function(instance) {
@@ -37,13 +38,16 @@ contract('Game', function(accounts) {
 
     it("should not be allowed to join twice", function() {
         return Game.deployed().then(function(instance) {
-          game = instance;
-          return game.join.call("test",3,{from: account_one});
+            game = instance;
+            return game.join.call("test",3,{from: account_one});
         }).then(function(players) {
             console.log(game.address);
-          console.log(players);
-          assert.notEqual(players[0],0, "Player 1 not created")
-          return game.join.call("test",3,{from: account_two});
+            console.log(players);
+            assert.notEqual(players[0],0, "Player 1 not created")
+          return game.getPlayers.call("test",{from: account_two});
+        }).then(function(players) {
+            console.log(players);
+            return game.join.call("test",0,{from: account_two});
         }).then(function(players) {
             console.log(game.address);
             console.log(players);
