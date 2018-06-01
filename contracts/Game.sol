@@ -4,6 +4,7 @@ contract Game {
     struct gameInfo {
         uint size;
         address[5] playerAddrs;
+        uint dealer;
     }
 
     mapping(string => gameInfo) private playerGameMap;
@@ -12,7 +13,9 @@ contract Game {
 
         if (playerGameMap[gameName].size == 0) {
             require(players >= 2 && players <= 5);
-            playerGameMap[gameName] = gameInfo(players,[msg.sender,0,0,0,0]);
+            uint rnd = uint(keccak256(block.timestamp)) % players;
+            playerGameMap[gameName] = gameInfo(players,[msg.sender,0,0,0,0],rnd);
+
             return playerGameMap[gameName].playerAddrs;
         }
 
@@ -41,6 +44,9 @@ function isGameFull(string gameName) public view returns (bool) {
     }
 
     return true;
+}
+function getDealer(string gameName) public view returns (uint) {
+    return playerGameMap[gameName].dealer;
 }
 }
 
