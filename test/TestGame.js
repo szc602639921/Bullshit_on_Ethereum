@@ -1,4 +1,6 @@
 var Game = artifacts.require("./Game.sol");
+var openpgp = require('../files/openpgp.min.js');
+openpgp.initWorker({ path:'../files/openpgp.worker.min.js' })
 
 contract('Game', function(accounts) {
 
@@ -56,7 +58,6 @@ contract('Game', function(accounts) {
         assert.equal(dealer,5,"Dealer");
         await game.join.sendTransaction("test",0,{from: account_five});
         dealer = await game.getDealer.call("test");
-        console.log(dealer)
         assert.isAtLeast(dealer,0,"Dealer");
         assert.isBelow(dealer,5,"Dealer");
     });
