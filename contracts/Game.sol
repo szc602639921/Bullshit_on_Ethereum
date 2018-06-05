@@ -4,7 +4,7 @@ contract Game {
     struct gameInfo {
         uint size;
         address[5] playerAddrs;
-        uint dealer;
+        uint256 dealer;
     }
 
     mapping(string => gameInfo) private playerGameMap;
@@ -13,17 +13,22 @@ contract Game {
 
         if (playerGameMap[gameName].size == 0) {
             require(players >= 2 && players <= 5);
-            uint rnd = uint(keccak256(block.timestamp)) % players;
-            playerGameMap[gameName] = gameInfo(players,[msg.sender,0,0,0,0],rnd);
+            playerGameMap[gameName] = gameInfo(players,[msg.sender,0,0,0,0],5);
 
             return playerGameMap[gameName].playerAddrs;
         }
 
-        for(uint i = 0; i<=playerGameMap[gameName].size; i++) {
+        gameInfo memory currentGame =  playerGameMap[gameName];
+
+        for(uint i = 0; i <= currentGame.size; i++) {
             if(playerGameMap[gameName].playerAddrs[i] == msg.sender){
                 break;
             }
             if(playerGameMap[gameName].playerAddrs[i] == 0x0){
+                if(i == currentGame.size - 1){
+                    uint rnd = uint(keccak256(block.timestamp)) % currentGame.size;
+                    playerGameMap[gameName].dealer = rnd;
+                }
                 playerGameMap[gameName].playerAddrs[i] = msg.sender;
                 break;
             }

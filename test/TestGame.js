@@ -4,6 +4,9 @@ contract('Game', function(accounts) {
 
     var account_one = accounts[0];
     var account_two = accounts[1];
+    var account_three = accounts[2];
+    var account_four = accounts[4];
+    var account_five = accounts[5];
 
     it("should be possible for two players to join", async () => {
         let game = await Game.new();
@@ -35,5 +38,26 @@ contract('Game', function(accounts) {
         await game.join.sendTransaction("test",2,{from: account_two});
         gameFull = await game.isGameFull.call("test");
         assert.equal(gameFull,true, "Game full check failed");
+    });
+
+    it("The dealer should only be determined after the last player joins.", async () => {
+        let game = await Game.new();
+        await game.join.sendTransaction("test",5,{from: account_one});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_two});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_three});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_four});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_five});
+        dealer = await game.getDealer.call("test");
+        console.log(dealer)
+        assert.isAtLeast(dealer,0,"Dealer");
+        assert.isBelow(dealer,5,"Dealer");
     });
 });
