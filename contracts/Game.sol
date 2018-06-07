@@ -1,6 +1,9 @@
 pragma solidity ^0.4.17;
 
+
 contract Game {
+
+
     struct gameInfo {
         uint size;
         address[5] playerAddrs;
@@ -14,19 +17,19 @@ contract Game {
 
         if (playerGameMap[gameName].size == 0) {
             require(players >= 2 && players <= 5);
-            playerGameMap[gameName] = gameInfo(players,[msg.sender,0,0,0,0],5);
+            playerGameMap[gameName] = gameInfo(players, [msg.sender, 0, 0, 0, 0], 5);
 
             return playerGameMap[gameName].playerAddrs;
         }
 
         gameInfo memory currentGame =  playerGameMap[gameName];
 
-        for(uint i = 0; i <= currentGame.size; i++) {
-            if(playerGameMap[gameName].playerAddrs[i] == msg.sender){
+        for (uint i = 0; i <= currentGame.size; i++) {
+            if (playerGameMap[gameName].playerAddrs[i] == msg.sender) {
                 break;
             }
-            if(playerGameMap[gameName].playerAddrs[i] == 0x0){
-                if(i == currentGame.size - 1){
+            if (playerGameMap[gameName].playerAddrs[i] == 0x0) {
+                if (i == currentGame.size - 1) {
                     uint rnd = uint(keccak256(block.timestamp)) % currentGame.size;
                     playerGameMap[gameName].dealer = rnd;
                 }
@@ -42,17 +45,19 @@ contract Game {
         return playerGameMap[gameName].playerAddrs;
     }
 
-function isGameFull(string gameName) public view returns (bool) {
-    gameInfo memory currentGame =  playerGameMap[gameName];
+    function isGameFull(string gameName) public view returns (bool) {
+        gameInfo memory currentGame =  playerGameMap[gameName];
 
-    if (currentGame.playerAddrs[currentGame.size - 1] == 0){
-        return false;
+        if (currentGame.playerAddrs[currentGame.size - 1] == 0) {
+            return false;
+        }
+
+        return true;
     }
 
-    return true;
-}
-function getDealer(string gameName) public view returns (uint) {
-    return playerGameMap[gameName].dealer;
-}
+    function getDealer(string gameName) public view returns (uint) {
+        return playerGameMap[gameName].dealer;
+    }
+
 }
 
