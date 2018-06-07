@@ -8,7 +8,7 @@ contract Game {
         uint size;
         address[5] playerAddrs;
         uint256 dealer;
-        string[5] pubKeys;
+        //string[5] pubKeys;
     }
 
     mapping(string => gameInfo) private playerGameMap;
