@@ -7,11 +7,13 @@ contract Game {
     struct gameInfo {
         uint size;
         address[5] playerAddrs;
-        uint256 dealer;
+        uint dealer;
+        uint currentPlayer;
+        uint[] playedCards;
         //string[5] pubKeys;
     }
     struct gameData {
-	    int[4][52] playerCards;//mybe not use this
+        int[4][52] playerCards;//mybe not use this
         int[][4][2] CardHistory;//second dim: players third dim: 0 is the encrypt real card 
     }
 
@@ -24,7 +26,7 @@ contract Game {
 
         if (currentGame.size == 0) {
             require(players >= 2 && players <= 5);
-            playerGameMap[gameName] = gameInfo(players, [msg.sender, 0, 0, 0, 0], 5);
+            playerGameMap[gameName] = gameInfo(players, [msg.sender, 0, 0, 0, 0], 5, 5, new uint[](52));
 
             return playerGameMap[gameName].playerAddrs;
         }
@@ -36,8 +38,11 @@ contract Game {
             }
             if (currentGame.playerAddrs[i] == 0x0) {
                 if (i == currentGame.size - 1) {
-                    uint rnd = uint(keccak256(block.timestamp)) % currentGame.size;
-                    playerGameMap[gameName].dealer = rnd;
+                    uint dealer = uint(keccak256(block.timestamp)) % currentGame.size;
+                    uint firstPlayer = (dealer + 1) % currentGame.size;
+                    playerGameMap[gameName].dealer = dealer;
+                    playerGameMap[gameName].currentPlayer = firstPlayer;
+
                 }
                 playerGameMap[gameName].playerAddrs[i] = msg.sender;
                 break;
@@ -66,15 +71,39 @@ contract Game {
     }
 
 
+    function playCard(string gameName, uint card) public returns (bool) {
 
+        uint[] memory playedCards = playerGameMap[gameName].playedCards;
+        uint index = playerGameMap[gameName].currentPlayer;
+        uint size = playerGameMap[gameName].size;
+        address currentPlayerAddr = playerGameMap[gameName].playerAddrs[index];
 
+        if (currentPlayerAddr != msg.sender) {
+            return false;
+        }
+
+        for (uint i = 0; i < 51; i++) {
+            if (playedCards[i] == 0x0) {
+                playerGameMap[gameName].playedCards[i] = card;
+                playerGameMap[gameName].currentPlayer = (index + 1) % size;
+                return true;
+            }
+        }
+
+    }
+
+    function getCurrentPlayer(string gameName) public view returns (uint) {
+        return playerGameMap[gameName].currentPlayer;
+    }
+
+/*
 function getCard(string gameName,uint cardNumber) public view returns (int) {
-	for(uint i = 0; i<=playerGameMap[gameName].size; i++) {
+for(uint i = 0; i<=playerGameMap[gameName].size; i++) {
             if(playerGameMap[gameName].playerAddrs[i] == msg.sender){
                 return playerGameData[gameName].playerCards[i][cardNumber];
             }
-	}
-	return -1;
+}
+return -1;
 }
 
 function getPlayerId(string gameName) public view returns (uint){
@@ -82,8 +111,8 @@ function getPlayerId(string gameName) public view returns (uint){
             if(playerGameMap[gameName].playerAddrs[i] == msg.sender){
                 return i;
             }
-	}
-	return 0xFFFF;
+}
+return 0xFFFF;
 }
 
 function getRound(string gameName) public view returns (uint){
@@ -93,25 +122,5 @@ function getRound(string gameName) public view returns (uint){
     } 
     return round - 4;
 }
-
-
-function giveCard(string gameName,int theCard,int theCheat) public  returns (bool){
-  
-    uint playerId = getPlayerId(gameName);
-    if(playerId > playerGameMap[gameName].size)
-    {
-        return false;
-    }
-
-    playerGameData[gameName].CardHistory[playerId][0].push(theCard);// hash of card
-    playerGameData[gameName].CardHistory[playerId][1].push(theCheat);
-
-    return true;
-
+*/
 }
-
-
-
-
-}
-

@@ -62,18 +62,19 @@ contract('Game', function(accounts) {
         assert.isBelow(dealer,5,"Dealer");
     });
 
-    
-    it("should recognize which round the game is ", async () => {
-        let game = await Game.new();
-	let  players = await game.join.sendTransaction("test",2,{from: account_one});
-        await game.giveCard.sendTransaction("test",2,1,{from: account_one});
-	let round = await game.getRound.call("test",{from: account_one});
-	//console.log(round);
-	//await game.giveCard.sendTransaction("test",2,1,{from: account_one});
-	//round = await game.getRound.call("test",{from: account_one});
-        //console.log(round);
+/*
+   it("should recognize which round the game is ", async () => {
+       let game = await Game.new();
+       let  players = await game.join.sendTransaction("test",2,{from: account_one});
+       await game.giveCard.sendTransaction("test",2,1,{from: account_one});
+       let round = await game.getRound.call("test",{from: account_one});
+       //console.log(round);
+       //await game.giveCard.sendTransaction("test",2,1,{from: account_one});
+       //round = await game.getRound.call("test",{from: account_one});
+       //console.log(round);
 
     });
+*/
 
 
 });
