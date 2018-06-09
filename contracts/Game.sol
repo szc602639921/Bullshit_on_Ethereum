@@ -3,6 +3,7 @@ pragma solidity ^0.4.17;
 
 contract Game {
 
+    enum GameState { JOIN, LIE, PLAY, DEAL, END }
 
     struct gameInfo {
         uint size;
@@ -10,8 +11,10 @@ contract Game {
         uint dealer;
         uint currentPlayer;
         uint[] playedCards;
+        GameState gameState;
         //string[5] pubKeys;
     }
+
     struct gameData {
         int[4][52] playerCards;//mybe not use this
         int[][4][2] CardHistory;//second dim: players third dim: 0 is the encrypt real card 
@@ -26,7 +29,7 @@ contract Game {
 
         if (currentGame.size == 0) {
             require(players >= 2 && players <= 5);
-            playerGameMap[gameName] = gameInfo(players, [msg.sender, 0, 0, 0, 0], 5, 5, new uint[](52));
+            playerGameMap[gameName] = gameInfo(players, [msg.sender, 0, 0, 0, 0], 5, 5, new uint[](52), GameState.JOIN);
 
             return playerGameMap[gameName].playerAddrs;
         }
@@ -94,6 +97,27 @@ contract Game {
 
     function getCurrentPlayer(string gameName) public view returns (uint) {
         return playerGameMap[gameName].currentPlayer;
+    }
+
+    function claimLie(string gameName) public returns (bool) {
+        uint currentPlayer = playerGameMap[gameName].currentPlayer;
+        address currentPlayerAddr = playerGameMap[gameName].playerAddrs[currentPlayer];
+        uint size = playerGameMap[gameName].size;
+
+        if (msg.sender == currentPlayerAddr) {
+
+            playerGameMap[gameName].gameState = GameState.LIE;
+
+            if (currentPlayer == 0) {
+                playerGameMap[gameName].currentPlayer = currentPlayer - 1;
+            } else {
+                playerGameMap[gameName].currentPlayer = size - 1;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
 /*
