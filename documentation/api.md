@@ -11,10 +11,10 @@
 
 # Functions
 
-address getCurrentPlayer(String gameName)
-address getDealer(String gameName)
+uint getCurrentPlayer(String gameName)
+uint getDealer(String gameName)
 bool playCard(String gameName, String cardHash)
-bool claimLie(String gameName)  
+bool claimLie(String gameName)
 bool dealCards(String gameName, array[])
 int[] getCards(String gameName) // Address of sender is implicitly known
 bool submitNonces(String gameName, String nonce)

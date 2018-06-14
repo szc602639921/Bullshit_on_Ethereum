@@ -10,18 +10,21 @@ contract Game {
         address[5] playerAddrs;
         uint dealer;
         uint currentPlayer;
-        uint[] playedCards;
         GameState gameState;
+        uint[] playedCards;
+        uint8[51][4] initialCards;
         //string[5] pubKeys;
     }
 
+/*
     struct gameData {
-        int[4][52] playerCards;//mybe not use this
+        int[4][52] playerCards;
         int[][4][2] CardHistory;//second dim: players third dim: 0 is the encrypt real card 
     }
+*/
 
     mapping(string => gameInfo) private playerGameMap;
-    mapping(string => gameData) private playerGameData;
+//    mapping(string => gameData) private playerGameData;
 
     function join(string gameName, uint256 players) public returns (address[5]) {
 
@@ -29,7 +32,8 @@ contract Game {
 
         if (currentGame.size == 0) {
             require(players >= 2 && players <= 5);
-            playerGameMap[gameName] = gameInfo(players, [msg.sender, 0, 0, 0, 0], 5, 5, new uint[](52), GameState.JOIN);
+            uint8[51][4] memory test;
+            playerGameMap[gameName] = gameInfo(players, [msg.sender, 0, 0, 0, 0], 5, 5, GameState.JOIN, new uint[](52), test);
 
             return playerGameMap[gameName].playerAddrs;
         }
@@ -118,6 +122,16 @@ contract Game {
         }
 
         return false;
+    }
+
+    function dealCards(string gameName, uint8[51][4] cards) public returns (bool) {
+        uint size = playerGameMap[gameName].size;
+
+        for (uint i = 0; i < size; i++) {
+            playerGameMap[gameName].initialCards[i] = cards[i];
+        }
+
+        return true;
     }
 
 /*
