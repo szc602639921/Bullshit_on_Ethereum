@@ -134,6 +134,20 @@ contract Game {
         return true;
     }
 
+    function getCards(string _gameName) public view returns (uint8[51]) {
+
+        uint size = playerGameMap[_gameName].size;
+
+        for (uint i = 0; i < size; i++) {
+            if (msg.sender == playerGameMap[_gameName].playerAddrs[i]) {
+                return playerGameMap[_gameName].initialCards[i];
+            }
+        }
+
+        uint8[51] memory emptyArray;
+        return emptyArray;
+    }
+
 /*
 function getCard(string gameName,uint cardNumber) public view returns (int) {
 for(uint i = 0; i<=playerGameMap[gameName].size; i++) {
