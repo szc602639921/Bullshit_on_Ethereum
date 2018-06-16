@@ -1,14 +1,14 @@
 var Game = artifacts.require("./Game.sol");
 var openpgp = require('../files/openpgp.min.js');
-openpgp.initWorker({ path:'../files/openpgp.worker.min.js' })
+openpgp.initWorker({ path:'../files/openpgp.worker.min.js' });
 
 contract('Game', function(accounts) {
 
     var account_one = accounts[0];
     var account_two = accounts[1];
     var account_three = accounts[2];
-    var account_four = accounts[4];
-    var account_five = accounts[5];
+    var account_four = accounts[3];
+    var account_five = accounts[4];
 
     it("should be possible for two players to join", async () => {
         let game = await Game.new();
