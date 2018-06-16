@@ -144,21 +144,13 @@ contract Game {
 
     function getCards(string _gameName) public view returns (uint8[51]) {
 
-        uint size = playerGameMap[_gameName].size;
+        return playerGameMap[_gameName].initialCards[_myPositon(_gameName, msg.sender)];
 
-        for (uint i = 0; i < size; i++) {
-            if (msg.sender == playerGameMap[_gameName].playerAddrs[i]) {
-                return playerGameMap[_gameName].initialCards[i];
-            }
-        }
-
-        uint8[51] memory emptyArray;
-        return emptyArray;
     }
 
     // https://stackoverflow.com/questions/42716858/string-array-in-solidity
     function submitNonces(string _gameName, byte[256][] _nonces) public returns (bool) {
-        playerGameMap[_gameName].nonces[myPositon(_gameName, msg.sender)] = _nonces;
+        playerGameMap[_gameName].nonces[_myPositon(_gameName, msg.sender)] = _nonces;
         return true;
     }
 
@@ -168,7 +160,7 @@ contract Game {
         return cards;
     }
 
-    function myPositon(string _gameName, address _addr) private view returns (uint) {
+    function _myPositon(string _gameName, address _addr) private view returns (uint) {
 
         for (uint i; i < playerGameMap[_gameName].size; i++) {
             if (playerGameMap[_gameName].playerAddrs[i] == _addr) {
