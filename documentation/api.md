@@ -21,3 +21,12 @@ bool submitNonces(String gameName, String nonce)
 string[5] retrieveNonces(String gameName)
 bool isGameFull(String gameName);
 bool joinGame(String gameName, int playerCount);
+
+# Game States
+
+JOIN => 0
+DEAL => 1
+PLAY => 2
+LIE => 3
+REVEAL => 4
+END => 5

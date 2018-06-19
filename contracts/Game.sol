@@ -10,7 +10,7 @@ contract Game {
         address[5] playerAddrs;
         uint dealer;
         uint currentPlayer;
-        GameState gameState;
+        GameState state;
         uint8[] playedCards;
         uint8[51][5] initialCards;
         byte[256][][5] nonces;
@@ -50,7 +50,7 @@ contract Game {
         }
 
 
-        for (uint i = 0; i <= currentGame.size; i++) {
+        for (uint i = 0; i <= currentGame.size - 1; i++) {
             if (currentGame.playerAddrs[i] == msg.sender) {
                 break;
             }
@@ -60,6 +60,7 @@ contract Game {
                     uint firstPlayer = (dealer + 1) % currentGame.size;
                     playerGameMap[gameName].dealer = dealer;
                     playerGameMap[gameName].currentPlayer = firstPlayer;
+                    playerGameMap[gameName].state = GameState.DEAL;
 
                 }
                 playerGameMap[gameName].playerAddrs[i] = msg.sender;
@@ -91,10 +92,10 @@ contract Game {
 
     function playCard(string _gameName, uint8 _card) public {
         require(isGameFull(_gameName));
-        address currentPlayerAddr = playerGameMap[_gameName].playerAddrs[index];
-        //require(msg.sender == currentPlayer)
 
         uint index = playerGameMap[_gameName].currentPlayer;
+        address currentPlayerAddr = playerGameMap[_gameName].playerAddrs[index];
+        require(msg.sender == currentPlayerAddr);
         uint size = playerGameMap[_gameName].size - 1;
 
         playerGameMap[_gameName].playedCards.push(_card);
@@ -113,7 +114,7 @@ contract Game {
 
         if (msg.sender == currentPlayerAddr) {
 
-            playerGameMap[gameName].gameState = GameState.LIE;
+            playerGameMap[gameName].state = GameState.LIE;
 
             if (currentPlayer == 0) {
                 playerGameMap[gameName].currentPlayer = currentPlayer - 1;
@@ -153,6 +154,11 @@ contract Game {
         uint8[] memory cards = playerGameMap[_gameName].playedCards;
         playerGameMap[_gameName].playedCards = new uint8[] (0);
         return cards;
+    }
+
+    function getState(string _gameName) public view returns (GameState) {
+        require(playerGameMap[_gameName].size != 0);
+        return playerGameMap[_gameName].state;
     }
 
     function _myPositon(string _gameName, address _addr) private view returns (uint) {
