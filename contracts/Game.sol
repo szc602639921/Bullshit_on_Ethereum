@@ -96,7 +96,7 @@ contract Game {
         uint index = playerGameMap[_gameName].currentPlayer;
         address currentPlayerAddr = playerGameMap[_gameName].playerAddrs[index];
         require(msg.sender == currentPlayerAddr);
-        uint size = playerGameMap[_gameName].size - 1;
+        uint size = playerGameMap[_gameName].size;
 
         playerGameMap[_gameName].playedCards.push(_card);
         playerGameMap[_gameName].currentPlayer = (index + 1) % size;
