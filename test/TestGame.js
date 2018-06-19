@@ -62,6 +62,30 @@ contract('Game', function(accounts) {
         assert.isBelow(dealer,5,"Dealer");
     });
 
+      // TODO
+      it("", async () => {
+        let game = await Game.new();
+        await game.join.sendTransaction("test",5,{from: account_one});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_two});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_three});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_four});
+        dealer = await game.getDealer.call("test");
+        assert.equal(dealer,5,"Dealer");
+        await game.join.sendTransaction("test",0,{from: account_five});
+        dealer = await game.getDealer.call("test");
+        assert.isAtLeast(dealer,0,"Dealer");
+        assert.isBelow(dealer,5,"Dealer");
+        console.log(dealer);
+        courrentplayer = await game.getCurrentPlayer.call("test");
+        console.log(courrentplayer);
+    });
+
 /*
    it("should recognize which round the game is ", async () => {
        let game = await Game.new();

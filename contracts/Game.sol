@@ -90,6 +90,7 @@ contract Game {
 
 
     function playCard(string gameName, uint8 card) public returns (bool) {
+        require(isGameFull(gameName));
 
         uint index = playerGameMap[gameName].currentPlayer;
         uint size = playerGameMap[gameName].size;
@@ -168,6 +169,23 @@ contract Game {
             }
         }
     }
+
+/*
+    SPADES: '♠', 0
+    HEARTS: '♥', 1
+    DIAMONDS: '♦', 2
+    CLUBS: '♣' 3
+*/
+    function get_card_suit(uint8 card) public pure returns (uint8) {
+        assert(card < 52);
+        return card / 13;
+    }
+
+    function get_card_rank(uint8 card) public pure returns (uint8) {
+        assert(card < 52);
+        return card % 13;
+    }
+
 
 
 /*
