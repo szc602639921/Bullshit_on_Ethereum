@@ -47,4 +47,22 @@ contract('Game', function(accounts) {
         r = await game.getCards.call("test");
         console.log(r.map(Number))
     });
+
+    it("Test card dealing", async () => {
+        let game = await Game.new();
+
+        for (i = 1; i < 5; i++) {
+          await game.join.sendTransaction("test",5,{from: accounts[i]});
+          dealer = await game.getDealer.call("test");
+          assert.equal(dealer,5,"Dealer");
+          console.log("Player " + i + " joined.")
+        }
+
+        await game.join.sendTransaction("test",0,{from: accounts[5]});
+        dealer = await game.getDealer.call("test");
+        console.log("Player " + 5 + " joined.")
+        console.log("Player " + dealer + " is the dealer for this round.")
+
+        r = await game.playCard.sendTransaction("test",12,{from: accounts[1]});
+    });
 });

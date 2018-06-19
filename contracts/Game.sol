@@ -3,7 +3,7 @@ pragma solidity ^0.4.17;
 
 contract Game {
 
-    enum GameState { JOIN, LIE, PLAY, DEAL, END }
+    enum GameState { JOIN, DEAL, PLAY, LIE, REVEAL, END }
 
     struct gameInfo {
         uint size;
@@ -89,22 +89,16 @@ contract Game {
     }
 
 
-    function playCard(string gameName, uint8 card) public returns (bool) {
-        require(isGameFull(gameName));
+    function playCard(string _gameName, uint8 _card) public {
+        require(isGameFull(_gameName));
+        address currentPlayerAddr = playerGameMap[_gameName].playerAddrs[index];
+        //require(msg.sender == currentPlayer)
 
-        uint index = playerGameMap[gameName].currentPlayer;
-        uint size = playerGameMap[gameName].size;
-        address currentPlayerAddr = playerGameMap[gameName].playerAddrs[index];
+        uint index = playerGameMap[_gameName].currentPlayer;
+        uint size = playerGameMap[_gameName].size - 1;
 
-        if (currentPlayerAddr != msg.sender) {
-            return false;
-        }
-
-        playerGameMap[gameName].playedCards.push(card);
-        playerGameMap[gameName].currentPlayer = (index + 1) % size;
-
-        return true;
-
+        playerGameMap[_gameName].playedCards.push(_card);
+        playerGameMap[_gameName].currentPlayer = (index + 1) % size;
 
     }
 
