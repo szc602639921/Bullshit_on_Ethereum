@@ -108,8 +108,6 @@ contract Game {
 
         playerGameMap[gameName].currentPlayer = (playerGameMap[gameName].currentPlayer+1)%playerGameMap[gameName].size;
         playerGameMap[gameName].state = GameState.PLAY;
-
-        return true;
     }
 
     function getCards(string _gameName) public view returns (uint8[51]) {
