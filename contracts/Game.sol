@@ -17,15 +17,7 @@ contract Game {
         //string[5] pubKeys;
     }
 
-/*
-    struct gameData {
-        int[4][52] playerCards;
-        int[][4][2] CardHistory;//second dim: players third dim: 0 is the encrypt real card 
-    }
-*/
-
     mapping(string => gameInfo) private playerGameMap;
-//    mapping(string => gameData) private playerGameData;
 
     function join(string gameName, uint256 players) public returns (address[5]) {
 
@@ -140,13 +132,19 @@ contract Game {
 
     function getCards(string _gameName) public view returns (uint8[51]) {
 
-        return playerGameMap[_gameName].initialCards[_myPositon(_gameName, msg.sender)];
+        return playerGameMap[_gameName].initialCards[_getPlayerId(_gameName, msg.sender)];
+
+    }
+
+    function showCardsOnTable(string _gameName) public view returns (uint8[]) {
+
+        return playerGameMap[_gameName].playedCards;
 
     }
 
     // https://stackoverflow.com/questions/42716858/string-array-in-solidity
     function submitNonces(string _gameName, byte[256][] _nonces) public returns (bool) {
-        playerGameMap[_gameName].nonces[_myPositon(_gameName, msg.sender)] = _nonces;
+        playerGameMap[_gameName].nonces[_getPlayerId(_gameName, msg.sender)] = _nonces;
         return true;
     }
 
@@ -161,7 +159,7 @@ contract Game {
         return playerGameMap[_gameName].state;
     }
 
-    function _myPositon(string _gameName, address _addr) private view returns (uint) {
+    function _getPlayerId(string _gameName, address _addr) private view returns (uint) {
 
         for (uint i; i < playerGameMap[_gameName].size; i++) {
             if (playerGameMap[_gameName].playerAddrs[i] == _addr) {
