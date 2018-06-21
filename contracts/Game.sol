@@ -8,18 +8,16 @@ contract Game {
     struct gameInfo {
         uint size;
         address[5] playerAddrs;
-        uint dealer;
         uint currentPlayer;
         GameState state;
         uint8[] playedCards;
         uint8[51][5] initialCards;
         byte[256][][5] nonces;
-        //string[5] pubKeys;
     }
 
     mapping(string => gameInfo) private playerGameMap;
 
-    function join(string gameName, uint256 players) public returns (address[5]) {
+    function join(string gameName, uint256 players) public {
 
         gameInfo memory currentGame =  playerGameMap[gameName];
 
@@ -31,16 +29,13 @@ contract Game {
                 players,
                 [msg.sender, 0, 0, 0, 0],
                 5,
-                5,
                 GameState.JOIN,
                 new uint8[] (0),
                 test,
                 nonces
             );
 
-            return playerGameMap[gameName].playerAddrs;
         }
-
 
         for (uint i = 0; i <= currentGame.size - 1; i++) {
             if (currentGame.playerAddrs[i] == msg.sender) {
@@ -49,9 +44,7 @@ contract Game {
             if (currentGame.playerAddrs[i] == 0x0) {
                 if (i == currentGame.size - 1) {
                     uint dealer = uint(keccak256(block.timestamp)) % currentGame.size;
-                    uint firstPlayer = (dealer + 1) % currentGame.size;
-                    playerGameMap[gameName].dealer = dealer;
-                    playerGameMap[gameName].currentPlayer = firstPlayer;
+                    playerGameMap[gameName].currentPlayer = dealer;
                     playerGameMap[gameName].state = GameState.DEAL;
 
                 }
@@ -60,7 +53,6 @@ contract Game {
             }
         }
 
-        return currentGame.playerAddrs;
     }
 
     function getPlayers(string gameName) public view returns (address[5]) {
@@ -76,11 +68,6 @@ contract Game {
 
         return true;
     }
-
-    function getDealer(string gameName) public view returns (uint) {
-        return playerGameMap[gameName].dealer;
-    }
-
 
     function playCard(string _gameName, uint8 _card) public {
         require(isGameFull(_gameName));
@@ -109,14 +96,10 @@ contract Game {
             } else {
                 playerGameMap[gameName].currentPlayer = size - 1;
             }
-
-            return true;
         }
-
-        return false;
     }
 
-    function dealCards(string gameName, uint8[51][5] cards) public returns (bool) {
+    function dealCards(string gameName, uint8[51][5] cards) public {
         uint size = playerGameMap[gameName].size;
 
         for (uint i = 0; i < size; i++) {
@@ -142,9 +125,8 @@ contract Game {
     }
 
     // https://stackoverflow.com/questions/42716858/string-array-in-solidity
-    function submitNonces(string _gameName, byte[256][] _nonces) public returns (bool) {
+    function submitNonces(string _gameName, byte[256][] _nonces) public {
         playerGameMap[_gameName].nonces[getPlayerId(_gameName, msg.sender)] = _nonces;
-        return true;
     }
 
     function takeCardsOnTable(string _gameName) public returns (uint8[]) {
@@ -159,14 +141,12 @@ contract Game {
     }
 
     function getPlayerId(string _gameName, address _addr) public view returns (uint) {
-
         for (uint i; i < playerGameMap[_gameName].size; i++) {
             if (playerGameMap[_gameName].playerAddrs[i] == _addr) {
                 return i;
             }
         }
     }
-
 /*
     SPADES: '♠', 0
     HEARTS: '♥', 1
@@ -182,9 +162,6 @@ contract Game {
         assert(card < 52);
         return card % 13;
     }
-
-
-
 /*
 function getCard(string gameName,uint cardNumber) public view returns (int) {
 for(uint i = 0; i<=playerGameMap[gameName].size; i++) {

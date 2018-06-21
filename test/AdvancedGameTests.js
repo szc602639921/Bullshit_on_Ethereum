@@ -17,17 +17,10 @@ contract('Game', function(accounts) {
 
         for (i = 1; i < 5; i++) {
           await game.join.sendTransaction("test",5,{from: accounts[i]});
-          dealer = parseInt(await game.getDealer.call("test"));
-          assert.equal(dealer,5,"Dealer");
-          console.log("Player " + i + " joined.");
         }
 
         await game.join.sendTransaction("test",0,{from: accounts[5]});
-        dealer = parseInt(await game.getDealer.call("test"),10);
-        console.log("Player " + 5 + " joined.");
-        assert.isAtLeast(dealer, 0,"Dealer");
-        assert.isBelow(dealer,5,"Dealer");
-        console.log("Player " + dealer + " is the dealer for this round.");
+        dealer = parseInt(await game.getCurrentPlayer.call("test"),10);
 
         var deck = [];
 
