@@ -8,13 +8,11 @@ contract Game {
     struct gameInfo {
         uint size;
         address[5] playerAddrs;
-        uint dealer;
         uint currentPlayer;
         GameState state;
         uint8[] playedCards;
         uint8[51][5] initialCards;
         byte[256][][5] nonces;
-        //string[5] pubKeys;
     }
 
     mapping(string => gameInfo) private playerGameMap;
@@ -31,7 +29,6 @@ contract Game {
                 players,
                 [msg.sender, 0, 0, 0, 0],
                 5,
-                5,
                 GameState.JOIN,
                 new uint8[] (0),
                 test,
@@ -41,7 +38,6 @@ contract Game {
             return playerGameMap[gameName].playerAddrs;
         }
 
-
         for (uint i = 0; i <= currentGame.size - 1; i++) {
             if (currentGame.playerAddrs[i] == msg.sender) {
                 break;
@@ -49,9 +45,7 @@ contract Game {
             if (currentGame.playerAddrs[i] == 0x0) {
                 if (i == currentGame.size - 1) {
                     uint dealer = uint(keccak256(block.timestamp)) % currentGame.size;
-                    uint firstPlayer = (dealer + 1) % currentGame.size;
-                    playerGameMap[gameName].dealer = dealer;
-                    playerGameMap[gameName].currentPlayer = firstPlayer;
+                    playerGameMap[gameName].currentPlayer = dealer;
                     playerGameMap[gameName].state = GameState.DEAL;
 
                 }
@@ -76,11 +70,6 @@ contract Game {
 
         return true;
     }
-
-    function getDealer(string gameName) public view returns (uint) {
-        return playerGameMap[gameName].dealer;
-    }
-
 
     function playCard(string _gameName, uint8 _card) public {
         require(isGameFull(_gameName));
@@ -160,14 +149,12 @@ contract Game {
     }
 
     function getPlayerId(string _gameName, address _addr) public view returns (uint) {
-
         for (uint i; i < playerGameMap[_gameName].size; i++) {
             if (playerGameMap[_gameName].playerAddrs[i] == _addr) {
                 return i;
             }
         }
     }
-
 /*
     SPADES: '♠', 0
     HEARTS: '♥', 1
@@ -183,9 +170,6 @@ contract Game {
         assert(card < 52);
         return card % 13;
     }
-
-
-
 /*
 function getCard(string gameName,uint cardNumber) public view returns (int) {
 for(uint i = 0; i<=playerGameMap[gameName].size; i++) {

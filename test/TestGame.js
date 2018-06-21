@@ -44,20 +44,24 @@ contract('Game', function(accounts) {
     it("The dealer should only be determined after the last player joins.", async () => {
         let game = await Game.new();
         await game.join.sendTransaction("test",5,{from: account_one});
-        dealer = await game.getDealer.call("test");
+        dealer = await game.getCurrentPlayer.call("test");
         assert.equal(dealer,5,"Dealer");
         await game.join.sendTransaction("test",0,{from: account_two});
-        dealer = await game.getDealer.call("test");
+        dealer = await game.getCurrentPlayer.call("test");
         assert.equal(dealer,5,"Dealer");
         await game.join.sendTransaction("test",0,{from: account_three});
-        dealer = await game.getDealer.call("test");
+        dealer = await game.getCurrentPlayer.call("test");
         assert.equal(dealer,5,"Dealer");
         await game.join.sendTransaction("test",0,{from: account_four});
-        dealer = await game.getDealer.call("test");
+        dealer = await game.getCurrentPlayer.call("test");
         assert.equal(dealer,5,"Dealer");
+        state = parseInt(await game.getState.call("test"), 10);
+        assert.equal(state, 0)
         await game.join.sendTransaction("test",0,{from: account_five});
-        dealer = parseInt(await game.getDealer.call("test"), 10);
-        assert.isAtLeast(dealer,0,"Dealer");
-        assert.isBelow(dealer,5,"Dealer");
+        state = parseInt(await game.getState.call("test"), 10);
+        assert.equal(state, 1, "Game should transition to deal state after all players joined.")
+        dealer = parseInt(await game.getCurrentPlayer.call("test"), 10);
+        assert.isAtLeast(dealer,0,"Dealer Id must be in expected range of player Ids.");
+        assert.isBelow(dealer,5,"Dealer Id must be in expected range of player Ids.");
     });
 });
