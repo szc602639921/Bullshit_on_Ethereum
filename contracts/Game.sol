@@ -95,10 +95,6 @@ contract Game {
 
     }
 
-    function getCurrentPlayer(string gameName) public view returns (uint) {
-        return playerGameMap[gameName].currentPlayer;
-    }
-
     function claimLie(string gameName) public returns (bool) {
         uint currentPlayer = playerGameMap[gameName].currentPlayer;
         address currentPlayerAddr = playerGameMap[gameName].playerAddrs[currentPlayer];
@@ -127,6 +123,9 @@ contract Game {
             playerGameMap[gameName].initialCards[i] = cards[i];
         }
 
+        playerGameMap[gameName].currentPlayer = (playerGameMap[gameName].currentPlayer+1)%playerGameMap[gameName].size;
+        playerGameMap[gameName].state = GameState.PLAY;
+
         return true;
     }
 
@@ -154,9 +153,9 @@ contract Game {
         return cards;
     }
 
-    function getState(string _gameName) public view returns (GameState) {
+    function getState(string _gameName) public view returns (uint, GameState) {
         require(playerGameMap[_gameName].size != 0);
-        return playerGameMap[_gameName].state;
+        return (playerGameMap[_gameName].currentPlayer, playerGameMap[_gameName].state);
     }
 
     function getPlayerId(string _gameName, address _addr) public view returns (uint) {
