@@ -17,7 +17,7 @@ contract Game {
 
     mapping(string => gameInfo) private playerGameMap;
 
-    function join(string gameName, uint256 players) public returns (address[5]) {
+    function join(string gameName, uint256 players) public {
 
         gameInfo memory currentGame =  playerGameMap[gameName];
 
@@ -35,7 +35,6 @@ contract Game {
                 nonces
             );
 
-            return playerGameMap[gameName].playerAddrs;
         }
 
         for (uint i = 0; i <= currentGame.size - 1; i++) {
@@ -54,7 +53,6 @@ contract Game {
             }
         }
 
-        return currentGame.playerAddrs;
     }
 
     function getPlayers(string gameName) public view returns (address[5]) {
@@ -88,7 +86,7 @@ contract Game {
         return playerGameMap[gameName].currentPlayer;
     }
 
-    function claimLie(string gameName) public returns (bool) {
+    function claimLie(string gameName) public {
         uint currentPlayer = playerGameMap[gameName].currentPlayer;
         address currentPlayerAddr = playerGameMap[gameName].playerAddrs[currentPlayer];
         uint size = playerGameMap[gameName].size;
@@ -102,21 +100,15 @@ contract Game {
             } else {
                 playerGameMap[gameName].currentPlayer = size - 1;
             }
-
-            return true;
         }
-
-        return false;
     }
 
-    function dealCards(string gameName, uint8[51][5] cards) public returns (bool) {
+    function dealCards(string gameName, uint8[51][5] cards) public {
         uint size = playerGameMap[gameName].size;
 
         for (uint i = 0; i < size; i++) {
             playerGameMap[gameName].initialCards[i] = cards[i];
         }
-
-        return true;
     }
 
     function getCards(string _gameName) public view returns (uint8[51]) {
@@ -132,9 +124,8 @@ contract Game {
     }
 
     // https://stackoverflow.com/questions/42716858/string-array-in-solidity
-    function submitNonces(string _gameName, byte[256][] _nonces) public returns (bool) {
+    function submitNonces(string _gameName, byte[256][] _nonces) public {
         playerGameMap[_gameName].nonces[getPlayerId(_gameName, msg.sender)] = _nonces;
-        return true;
     }
 
     function takeCardsOnTable(string _gameName) public returns (uint8[]) {
