@@ -3,7 +3,6 @@ var openpgp = require('../files/openpgp.min.js');
 openpgp.initWorker({ path:'../files/openpgp.worker.min.js' });
 
 contract('Game', function(accounts) {
-
     var account_one = accounts[0];
     var account_two = accounts[1];
     var account_three = accounts[2];
@@ -57,48 +56,8 @@ contract('Game', function(accounts) {
         dealer = await game.getDealer.call("test");
         assert.equal(dealer,5,"Dealer");
         await game.join.sendTransaction("test",0,{from: account_five});
-        dealer = await game.getDealer.call("test");
+        dealer = parseInt(await game.getDealer.call("test"), 10);
         assert.isAtLeast(dealer,0,"Dealer");
         assert.isBelow(dealer,5,"Dealer");
     });
-
-      // TODO
-      it("", async () => {
-        let game = await Game.new();
-        await game.join.sendTransaction("test",5,{from: account_one});
-        dealer = await game.getDealer.call("test");
-        assert.equal(dealer,5,"Dealer");
-        await game.join.sendTransaction("test",0,{from: account_two});
-        dealer = await game.getDealer.call("test");
-        assert.equal(dealer,5,"Dealer");
-        await game.join.sendTransaction("test",0,{from: account_three});
-        dealer = await game.getDealer.call("test");
-        assert.equal(dealer,5,"Dealer");
-        await game.join.sendTransaction("test",0,{from: account_four});
-        dealer = await game.getDealer.call("test");
-        assert.equal(dealer,5,"Dealer");
-        await game.join.sendTransaction("test",0,{from: account_five});
-        dealer = await game.getDealer.call("test");
-        assert.isAtLeast(dealer,0,"Dealer");
-        assert.isBelow(dealer,5,"Dealer");
-        console.log(dealer);
-        courrentplayer = await game.getCurrentPlayer.call("test");
-        console.log(courrentplayer);
-    });
-
-/*
-   it("should recognize which round the game is ", async () => {
-       let game = await Game.new();
-       let  players = await game.join.sendTransaction("test",2,{from: account_one});
-       await game.giveCard.sendTransaction("test",2,1,{from: account_one});
-       let round = await game.getRound.call("test",{from: account_one});
-       //console.log(round);
-       //await game.giveCard.sendTransaction("test",2,1,{from: account_one});
-       //round = await game.getRound.call("test",{from: account_one});
-       //console.log(round);
-
-    });
-*/
-
-
 });
