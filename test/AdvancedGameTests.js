@@ -20,7 +20,7 @@ contract('Game', function(accounts) {
         }
 
         await game.join.sendTransaction("test",0,{from: accounts[5]});
-        dealer = parseInt(await game.getCurrentPlayer.call("test"),10);
+        [dealer, _] = await game.getState.call("test");
 
         var deck = [];
 
