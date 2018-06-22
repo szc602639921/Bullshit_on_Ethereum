@@ -100,19 +100,23 @@ contract Game {
     }
 
     function dealCards(string gameName, uint8[51][5] cards) public {
-        uint size = playerGameMap[gameName].size;
+        //uint size = playerGameMap[gameName].size;
 
+        /*
         for (uint i = 0; i < size; i++) {
             playerGameMap[gameName].initialCards[i] = cards[i];
         }
+        */
 
+        playerGameMap[gameName].initialCards = cards;
         playerGameMap[gameName].currentPlayer = (playerGameMap[gameName].currentPlayer+1)%playerGameMap[gameName].size;
         playerGameMap[gameName].state = GameState.PLAY;
     }
 
     function getCards(string _gameName) public view returns (uint8[51]) {
 
-        return playerGameMap[_gameName].initialCards[getPlayerId(_gameName, msg.sender)];
+        uint p = getPlayerId(_gameName, msg.sender);
+        return playerGameMap[_gameName].initialCards[p];
 
     }
 

@@ -36,8 +36,14 @@ contract('Game', function(accounts) {
           cards[i].push(deck.pop());
         }
 
+       // console.log(await game.getPlayerId("test", accounts[3]));
+
+        console.log(cards);
         await game.dealCards.sendTransaction("test", cards, {from: accounts[dealer]});
-        r = await game.getCards.call("test");
-        console.log(r.map(Number));
+
+        for (i = 1; i < 6; i++) {
+          r = await game.getCards.call("test", {from: accounts[i]});
+          console.log(r.map(Number));
+        }
     });
 });
