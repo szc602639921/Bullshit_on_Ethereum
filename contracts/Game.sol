@@ -99,16 +99,13 @@ contract Game {
         }
     }
 
-    function dealCards(string gameName, uint8[51][5] cards) public {
-        //uint size = playerGameMap[gameName].size;
+    function dealCards(string gameName, uint8[51][] cards) public {
+        uint size = playerGameMap[gameName].size;
 
-        /*
         for (uint i = 0; i < size; i++) {
             playerGameMap[gameName].initialCards[i] = cards[i];
         }
-        */
 
-        playerGameMap[gameName].initialCards = cards;
         playerGameMap[gameName].currentPlayer = (playerGameMap[gameName].currentPlayer+1)%playerGameMap[gameName].size;
         playerGameMap[gameName].state = GameState.PLAY;
     }
@@ -148,6 +145,11 @@ contract Game {
                 return i;
             }
         }
+    }
+
+    function getOpenCard(string _gameName) public view returns (uint8) {
+        //require(playerGameMap[_gameName].playedCards.length > 0);
+        return playerGameMap[_gameName].playedCards[0];
     }
 /*
     SPADES: '♠', 0
