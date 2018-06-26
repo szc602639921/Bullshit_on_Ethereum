@@ -1,6 +1,6 @@
 var Game = artifacts.require("./Game.sol");
-var openpgp = require('../files/openpgp.min.js');
-openpgp.initWorker({ path:'../files/openpgp.worker.min.js' });
+//var openpgp = require('../files/openpgp.min.js');
+//openpgp.initWorker({ path:'../files/openpgp.worker.min.js' });
 
 contract('Game', function(accounts) {
     var account_one = accounts[0];

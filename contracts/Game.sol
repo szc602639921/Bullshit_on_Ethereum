@@ -166,6 +166,13 @@ contract Game {
         assert(card < 52);
         return card % 13;
     }
+
+    function get_card_number(uint8 suit,uint8 rank) public pure returns (uint8) {
+        assert(suit < 4);
+        assert(rank < 13);
+        return suit*13 + rank;
+    }
+
 /*
 function getCard(string gameName,uint cardNumber) public view returns (int) {
 for(uint i = 0; i<=playerGameMap[gameName].size; i++) {
