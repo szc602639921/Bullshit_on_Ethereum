@@ -86,16 +86,14 @@ contract Game {
         uint currentPlayer = playerGameMap[gameName].currentPlayer;
         address currentPlayerAddr = playerGameMap[gameName].playerAddrs[currentPlayer];
         uint size = playerGameMap[gameName].size;
+        require(msg.sender == currentPlayerAddr);
 
-        if (msg.sender == currentPlayerAddr) {
+        playerGameMap[gameName].state = GameState.LIE;
 
-            playerGameMap[gameName].state = GameState.LIE;
-
-            if (currentPlayer == 0) {
-                playerGameMap[gameName].currentPlayer = currentPlayer - 1;
-            } else {
-                playerGameMap[gameName].currentPlayer = size - 1;
-            }
+        if (currentPlayer == 0) {
+           playerGameMap[gameName].currentPlayer = size - 1;
+        } else {
+           playerGameMap[gameName].currentPlayer = currentPlayer - 1;
         }
     }
 
@@ -129,6 +127,11 @@ contract Game {
     }
 
     function takeCardsOnTable(string _gameName) public returns (uint8[]) {
+        uint index = playerGameMap[_gameName].currentPlayer;
+        address currentPlayerAddr = playerGameMap[_gameName].playerAddrs[index];
+        require(msg.sender == currentPlayerAddr);
+        require(GameState.LIE == playerGameMap[_gameName].state);
+
         uint8[] memory cards = playerGameMap[_gameName].playedCards;
         playerGameMap[_gameName].playedCards = new uint8[] (0);
         return cards;
@@ -151,25 +154,38 @@ contract Game {
         //require(playerGameMap[_gameName].playedCards.length > 0);
         return playerGameMap[_gameName].playedCards[0];
     }
+
+    function isLie(uint8[] playedCards) pure returns (bool) {
+        uint8 lastCard = playedCards[playedCards.length - 1];
+        uint8 openCard = playedCards[0];
+
+        if(getSuit(lastCard) == getSuit(openCard) || getRank(lastCard) == getRank(openCard)) {
+            return false;
+        } else {
+            return true;
+        }
+
+
+    }
 /*
     SPADES: '♠', 0
     HEARTS: '♥', 1
     DIAMONDS: '♦', 2
     CLUBS: '♣' 3
 */
-    function get_card_suit(uint8 card) public pure returns (uint8) {
-        assert(card < 52);
+    function getSuit(uint8 card) public pure returns (uint8) {
+        require(card < 52);
         return card / 13;
     }
 
-    function get_card_rank(uint8 card) public pure returns (uint8) {
-        assert(card < 52);
+    function getRank(uint8 card) public pure returns (uint8) {
+        require(card < 52);
         return card % 13;
     }
 
-    function get_card_number(uint8 suit,uint8 rank) public pure returns (uint8) {
-        assert(suit < 4);
-        assert(rank < 13);
+    function getNumber(uint8 suit,uint8 rank) public pure returns (uint8) {
+        require(suit < 4);
+        require(rank < 13);
         return suit*13 + rank;
     }
 
