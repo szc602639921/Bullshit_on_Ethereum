@@ -84,16 +84,21 @@ contract Game {
 
     function claimLie(string gameName) public returns (bool) {
         uint currentPlayer = playerGameMap[gameName].currentPlayer;
+        uint8[] storage playedCards = playerGameMap[gameName].playedCards;
         address currentPlayerAddr = playerGameMap[gameName].playerAddrs[currentPlayer];
         uint size = playerGameMap[gameName].size;
         require(msg.sender == currentPlayerAddr);
 
         playerGameMap[gameName].state = GameState.LIE;
 
-        if (currentPlayer == 0) {
-           playerGameMap[gameName].currentPlayer = size - 1;
-        } else {
-           playerGameMap[gameName].currentPlayer = currentPlayer - 1;
+        if (isLie(playedCards)) {
+
+            if (currentPlayer == 0) {
+               playerGameMap[gameName].currentPlayer = size - 1;
+            } else {
+               playerGameMap[gameName].currentPlayer = currentPlayer - 1;
+            }
+
         }
     }
 
@@ -155,7 +160,7 @@ contract Game {
         return playerGameMap[_gameName].playedCards[0];
     }
 
-    function isLie(uint8[] playedCards) pure returns (bool) {
+    function isLie(uint8[] playedCards) public pure returns (bool) {
         uint8 lastCard = playedCards[playedCards.length - 1];
         uint8 openCard = playedCards[0];
 
