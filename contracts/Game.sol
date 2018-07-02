@@ -88,6 +88,7 @@ contract Game {
         address currentPlayerAddr = playerGameMap[gameName].playerAddrs[currentPlayer];
         uint size = playerGameMap[gameName].size;
         require(msg.sender == currentPlayerAddr);
+        require(playedCards.length > 1);
 
         playerGameMap[gameName].state = GameState.LIE;
 
