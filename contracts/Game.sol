@@ -3,6 +3,8 @@ pragma solidity ^0.4.17;
 
 contract Game {
 
+    event CardsAvailable(string gameName, uint8[] cards);
+
     enum GameState { JOIN, DEAL, PLAY, LIE, REVEAL, END }
 
     struct gameInfo {
@@ -132,7 +134,7 @@ contract Game {
         playerGameMap[_gameName].nonces[getPlayerId(_gameName, msg.sender)] = _nonces;
     }
 
-    function takeCardsOnTable(string _gameName) public returns (uint8[]) {
+    function takeCardsOnTable(string _gameName) public {
         uint index = playerGameMap[_gameName].currentPlayer;
         address currentPlayerAddr = playerGameMap[_gameName].playerAddrs[index];
         require(msg.sender == currentPlayerAddr);
@@ -140,7 +142,7 @@ contract Game {
 
         uint8[] memory cards = playerGameMap[_gameName].playedCards;
         playerGameMap[_gameName].playedCards = new uint8[] (0);
-        return cards;
+        emit CardsAvailable(_gameName, cards);
     }
 
     function getState(string _gameName) public view returns (uint, GameState) {
