@@ -146,9 +146,14 @@ contract Game {
         emit CardsAvailable(_gameName, cards);
     }
 
-    function getState(string _gameName) public view returns (uint, GameState) {
+    function getState(string _gameName) public view returns (uint, GameState, uint8) {
         require(playerGameMap[_gameName].size != 0);
-        return (playerGameMap[_gameName].currentPlayer, playerGameMap[_gameName].state);
+
+        if (playerGameMap[_gameName].playedCards.length > 0) {
+            return (playerGameMap[_gameName].currentPlayer, playerGameMap[_gameName].state, playerGameMap[_gameName].playedCards[0]);
+        } else {
+            return (playerGameMap[_gameName].currentPlayer, playerGameMap[_gameName].state, 0);
+        }
     }
 
     function getPlayerId(string _gameName, address _addr) public view returns (uint) {
@@ -157,11 +162,6 @@ contract Game {
                 return i;
             }
         }
-    }
-
-    function getOpenCard(string _gameName) public view returns (uint8) {
-        //require(playerGameMap[_gameName].playedCards.length > 0);
-        return playerGameMap[_gameName].playedCards[0];
     }
 
     function isLie(uint8[] playedCards) public pure returns (bool) {

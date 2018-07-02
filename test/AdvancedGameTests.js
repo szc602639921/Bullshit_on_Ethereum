@@ -20,7 +20,7 @@ contract('Game', function(accounts) {
         }
 
         await game.join.sendTransaction("test",0,{from: accounts[5]});
-        [dealer, _] = await game.getState.call("test");
+        [dealer, _, _] = await game.getState.call("test");
 
         var deck = [];
 
@@ -55,7 +55,7 @@ contract('Game', function(accounts) {
        }
 
        await game.join.sendTransaction("test",0,{from: accounts[1]});
-       [dealer, state] = await game.getState.call("test");
+       [dealer, state, _] = await game.getState.call("test");
 
        var deck = [];
 
@@ -81,13 +81,13 @@ contract('Game', function(accounts) {
        }
     });
 
-     it("Test card playing and getOpenCard.", async () => {
+     it("Test card playing.", async () => {
        let game = await Game.new();
 
        await game.join.sendTransaction("test",2,{from: accounts[0]});
        await game.join.sendTransaction("test",0,{from: accounts[1]});
 
-       [dealer, state] = await game.getState.call("test");
+       [dealer, state, _] = await game.getState.call("test");
 
        assert.equal(parseInt(state,10),1,"Game must be in DEAL state.");
 
@@ -109,15 +109,15 @@ contract('Game', function(accounts) {
 
        await game.dealCards.sendTransaction("test", cards, {from: accounts[dealer]});
 
-       [player, state] = await game.getState.call("test");
+       [player, state, _] = await game.getState.call("test");
        assert.equal(parseInt(state,10),2,"Game must be in PLAY state.");
 
        await game.playCard.sendTransaction("test", 10, {from: accounts[player]});
-       c = await game.getOpenCard.call("test");
+       [_, _, c] = await game.getState.call("test");
        assert.equal(parseInt(c,10),10,"Open card must be equal to first played card.");
-       [player, state] = await game.getState.call("test");
+       [player, state, _] = await game.getState.call("test");
        await game.playCard.sendTransaction("test", 11, {from: accounts[player]});
-       c = await game.getOpenCard.call("test");
+       [_, _, c] = await game.getState.call("test");
        assert.equal(parseInt(c,10),10,"Open card must be equal to first played card.");
 
     });
