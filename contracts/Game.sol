@@ -142,6 +142,7 @@ contract Game {
 
         uint8[] memory cards = playerGameMap[_gameName].playedCards;
         playerGameMap[_gameName].playedCards = new uint8[] (0);
+        playerGameMap[_gameName].state = GameState.PLAY;
         emit CardsAvailable(_gameName, cards);
     }
 
