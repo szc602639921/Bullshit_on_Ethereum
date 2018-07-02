@@ -142,8 +142,8 @@ contract Game {
 
         uint8[] memory cards = playerGameMap[_gameName].playedCards;
         playerGameMap[_gameName].playedCards = new uint8[] (0);
-        playerGameMap[_gameName].state = GameState.PLAY;
         emit CardsAvailable(_gameName, cards);
+        playerGameMap[_gameName].state = GameState.PLAY;
     }
 
     function getState(string _gameName) public view returns (uint, GameState, uint8) {
