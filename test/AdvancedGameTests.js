@@ -24,7 +24,7 @@ contract('Game', function(accounts) {
 
         var deck = [];
 
-        for (var i = 0; i < 52; i++) {
+        for (var i = 1; i < 53; i++) {
            deck.push(i);
         }
 
@@ -36,14 +36,12 @@ contract('Game', function(accounts) {
           cards[i].push(deck.pop());
         }
 
-       // console.log(await game.getPlayerId("test", accounts[3]));
-
-        console.log(cards);
         await game.dealCards.sendTransaction("test", cards, {from: accounts[dealer]});
 
         for (i = 1; i < 6; i++) {
           r = await game.getCards.call("test", {from: accounts[i]});
-          console.log(r.map(Number));
+          ret_cards = r.map(Number).filter(item => item !== 0);
+          assert.deepEqual(ret_cards, cards[i - 1]);
         }
     });
 
@@ -59,7 +57,7 @@ contract('Game', function(accounts) {
 
        var deck = [];
 
-       for (var i = 0; i < 52; i++) {
+       for (var i = 1; i < 53; i++) {
           deck.push(i);
        }
 
@@ -71,13 +69,45 @@ contract('Game', function(accounts) {
          cards[i].push(deck.pop());
        }
 
-      // console.log(await game.getPlayerId("test", accounts[3]));
-
        await game.dealCards.sendTransaction("test", cards, {from: accounts[dealer]});
 
        for (i = 0; i < 2; i++) {
          r = await game.getCards.call("test", {from: accounts[i]});
-         console.log(r.map(Number));
+         ret_cards = r.map(Number).filter(item => item !== 0);
+         assert.deepEqual(ret_cards, cards[i]);
+       }
+    });
+
+     it("Test card dealing with 3 players.", async () => {
+       let game = await Game.new();
+
+       for (i = 0; i < 2; i++) {
+         await game.join.sendTransaction("test",3,{from: accounts[i]});
+       }
+
+       await game.join.sendTransaction("test",0,{from: accounts[2]});
+       [dealer, state, _] = await game.getState.call("test");
+
+       var deck = [];
+
+       for (var i = 1; i < 53; i++) {
+          deck.push(i);
+       }
+
+       deck = shuffle(deck);
+
+       var cards = [[],[],[]];
+
+       for (i = 0; deck.length > 0 ; (i = (i + 1) % 3)) {
+         cards[i].push(deck.pop());
+       }
+
+       await game.dealCards.sendTransaction("test", cards, {from: accounts[dealer]});
+
+       for (i = 0; i < 3; i++) {
+         r = await game.getCards.call("test", {from: accounts[i]});
+         ret_cards = r.map(Number).filter(item => item !== 0);
+         assert.deepEqual(ret_cards, cards[i]);
        }
     });
 
