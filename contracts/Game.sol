@@ -1,4 +1,4 @@
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.4.24;
 
 
 contract Game {
@@ -135,9 +135,13 @@ contract Game {
 
     }
 
-    function getPubkeys(string _gameName) public view returns (string[]) {
+    function getPubkeys(string _gameName, uint _playerId) public view returns (string) {
 
-        return playerGameMap[_gameName].pubkeys;
+        if(_playerId > playerGameMap[_gameName].pubkeys.length) {
+            return "0";
+        }
+
+        return playerGameMap[_gameName].pubkeys[_playerId];
 
     }
 
