@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.23;
 
 
 contract Game {
@@ -13,7 +13,7 @@ contract Game {
         uint currentPlayer;
         GameState state;
         uint8[] playedCards;
-        uint8[51][5] initialCards;
+        string[5] initialCards;
         string[] pubkeys;
         //byte[256][][5] nonces;
     }
@@ -111,12 +111,11 @@ contract Game {
         }
     }
 
-    function dealCards(string gameName, uint8[51][] cards) public {
+    function dealCards(string gameName, string cards, uint _playerId) public {
         uint size = playerGameMap[gameName].size;
+        require(_playerId < size);
 
-        for (uint i = 0; i < size; i++) {
-            playerGameMap[gameName].initialCards[i] = cards[i];
-        }
+        playerGameMap[gameName].initialCards[_playerId] = cards;
 
         playerGameMap[gameName].currentPlayer = (playerGameMap[gameName].currentPlayer+1)%playerGameMap[gameName].size;
         playerGameMap[gameName].state = GameState.PLAY;
