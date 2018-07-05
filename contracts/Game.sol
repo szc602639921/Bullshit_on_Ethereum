@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.23;
 
 
 contract Game {
@@ -13,20 +13,25 @@ contract Game {
         uint currentPlayer;
         GameState state;
         uint8[] playedCards;
-        uint8[51][5] initialCards;
-        byte[256][][5] nonces;
+        string[5] initialCards;
+        string[] pubkeys;
+        //byte[256][][5] nonces;
     }
 
     mapping(string => gameInfo) private playerGameMap;
 
-    function join(string gameName, uint256 players) public {
+    function join(string gameName, uint256 players, string pubkey) public {
 
         gameInfo memory currentGame =  playerGameMap[gameName];
 
         if (currentGame.size == 0) {
             require(players >= 2 && players <= 5);
-            uint8[51][5] memory test;
-            byte[256][][5] memory nonces;
+            //byte[150][] memory pubkeys = new byte[150][](players);
+            string[5] memory test;
+            string[] memory pubkeys = new string[](players);
+            pubkeys[0] = pubkey;
+            //pubkeys[0] = pubkey;
+            //byte[256][][5] memory nonces;
             playerGameMap[gameName] = gameInfo(
                 players,
                 [msg.sender, 0, 0, 0, 0],
@@ -34,7 +39,8 @@ contract Game {
                 GameState.JOIN,
                 new uint8[] (0),
                 test,
-                nonces
+                pubkeys
+                //nonces
             );
 
         }
@@ -51,6 +57,7 @@ contract Game {
 
                 }
                 playerGameMap[gameName].playerAddrs[i] = msg.sender;
+                playerGameMap[gameName].pubkeys[i] = pubkey;
                 break;
             }
         }
@@ -105,18 +112,17 @@ contract Game {
         }
     }
 
-    function dealCards(string gameName, uint8[51][] cards) public {
+    function dealCards(string gameName, string cards, uint _playerId) public {
         uint size = playerGameMap[gameName].size;
+        require(_playerId < size);
 
-        for (uint i = 0; i < size; i++) {
-            playerGameMap[gameName].initialCards[i] = cards[i];
-        }
+        playerGameMap[gameName].initialCards[_playerId] = cards;
 
         playerGameMap[gameName].currentPlayer = (playerGameMap[gameName].currentPlayer+1)%playerGameMap[gameName].size;
         playerGameMap[gameName].state = GameState.PLAY;
     }
 
-    function getCards(string _gameName) public view returns (uint8[51]) {
+    function getCards(string _gameName) public view returns (string) {
 
         uint p = getPlayerId(_gameName, msg.sender);
         return playerGameMap[_gameName].initialCards[p];
@@ -129,10 +135,19 @@ contract Game {
 
     }
 
-    // https://stackoverflow.com/questions/42716858/string-array-in-solidity
-    function submitNonces(string _gameName, byte[256][] _nonces) public {
-        playerGameMap[_gameName].nonces[getPlayerId(_gameName, msg.sender)] = _nonces;
+    function getPubkeys(string _gameName, uint _playerId) public view returns (string) {
+
+        if(_playerId >= playerGameMap[_gameName].pubkeys.length) {
+            return "0";
+        }
+        return playerGameMap[_gameName].pubkeys[_playerId];
+
     }
+
+    // https://stackoverflow.com/questions/42716858/string-array-in-solidity
+//    function submitNonces(string _gameName, byte[256][] _nonces) public {
+//        playerGameMap[_gameName].nonces[getPlayerId(_gameName, msg.sender)] = _nonces;
+//    }
 
     function takeCardsOnTable(string _gameName) public {
         uint index = playerGameMap[_gameName].currentPlayer;
