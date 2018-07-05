@@ -26,8 +26,8 @@ contract Game {
 
         if (currentGame.size == 0) {
             require(players >= 2 && players <= 5);
-            uint8[51][5] memory test;
             //byte[150][] memory pubkeys = new byte[150][](players);
+            string[5] memory test;
             string[] memory pubkeys = new string[](players);
             pubkeys[0] = pubkey;
             //pubkeys[0] = pubkey;
@@ -57,6 +57,7 @@ contract Game {
 
                 }
                 playerGameMap[gameName].playerAddrs[i] = msg.sender;
+                playerGameMap[gameName].pubkeys[i] = pubkey;
                 break;
             }
         }
@@ -121,7 +122,7 @@ contract Game {
         playerGameMap[gameName].state = GameState.PLAY;
     }
 
-    function getCards(string _gameName) public view returns (uint8[51]) {
+    function getCards(string _gameName) public view returns (string) {
 
         uint p = getPlayerId(_gameName, msg.sender);
         return playerGameMap[_gameName].initialCards[p];
@@ -136,10 +137,9 @@ contract Game {
 
     function getPubkeys(string _gameName, uint _playerId) public view returns (string) {
 
-        if(_playerId > playerGameMap[_gameName].pubkeys.length) {
+        if(_playerId >= playerGameMap[_gameName].pubkeys.length) {
             return "0";
         }
-
         return playerGameMap[_gameName].pubkeys[_playerId];
 
     }
