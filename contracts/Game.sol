@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma experimental ABIEncoderV2;
 
 
 contract Game {
@@ -14,19 +14,24 @@ contract Game {
         GameState state;
         uint8[] playedCards;
         uint8[51][5] initialCards;
-        byte[256][][5] nonces;
+        string[] pubkeys;
+        //byte[256][][5] nonces;
     }
 
     mapping(string => gameInfo) private playerGameMap;
 
-    function join(string gameName, uint256 players) public {
+    function join(string gameName, uint256 players, string pubkey) public {
 
         gameInfo memory currentGame =  playerGameMap[gameName];
 
         if (currentGame.size == 0) {
             require(players >= 2 && players <= 5);
             uint8[51][5] memory test;
-            byte[256][][5] memory nonces;
+            //byte[150][] memory pubkeys = new byte[150][](players);
+            string[] memory pubkeys = new string[](players);
+            pubkeys[0] = pubkey;
+            //pubkeys[0] = pubkey;
+            //byte[256][][5] memory nonces;
             playerGameMap[gameName] = gameInfo(
                 players,
                 [msg.sender, 0, 0, 0, 0],
@@ -34,7 +39,8 @@ contract Game {
                 GameState.JOIN,
                 new uint8[] (0),
                 test,
-                nonces
+                pubkeys
+                //nonces
             );
 
         }
@@ -129,10 +135,16 @@ contract Game {
 
     }
 
-    // https://stackoverflow.com/questions/42716858/string-array-in-solidity
-    function submitNonces(string _gameName, byte[256][] _nonces) public {
-        playerGameMap[_gameName].nonces[getPlayerId(_gameName, msg.sender)] = _nonces;
+    function getPubkeys(string _gameName) public view returns (string[]) {
+
+        return playerGameMap[_gameName].pubkeys;
+
     }
+
+    // https://stackoverflow.com/questions/42716858/string-array-in-solidity
+//    function submitNonces(string _gameName, byte[256][] _nonces) public {
+//        playerGameMap[_gameName].nonces[getPlayerId(_gameName, msg.sender)] = _nonces;
+//    }
 
     function takeCardsOnTable(string _gameName) public {
         uint index = playerGameMap[_gameName].currentPlayer;
